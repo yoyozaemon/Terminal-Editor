@@ -57,4 +57,51 @@ struct editorSyntax{
   char *multiline_comment_start;
   char *multiline_comment_end;
   int flags;
-}
+};
+
+// Stores the row of the text in editor 
+typedef struct erow{
+  int idx;
+  int size;
+  int rsize;
+  char *chars;
+  char * render;
+  unsigned char *hl;
+  int hl_open_comment;
+} erow;
+
+// Keeps track of global editor state 
+struct editorConfig{
+  int cx, cy;
+  int rx;
+  int screenrows;
+  int screencols;
+  int rowoff;
+  int coloff;
+  int numrows;
+  int dirty;
+  erow *row;
+  char *filename;
+  char statusmsg[80];
+  time_t statusmsg_time;
+  struct editorSyntax *syntax;
+  struct termios orig_termios;
+};
+
+struct editorConfig E;
+
+char *C_HL_extensions[] = {".c",".h",".cpp",NULL};
+char *C_HL_keywords[] = {"switch","if","while","for","break","continue", 
+  "struct","union","typedef","static","enum","class","case","return","else", 
+  "int|","long|","double|","float|","char|","unsigned|","signed|","void|",NULL
+};
+
+struct editorSyntax HLDB[] ={
+  {
+    "c", 
+    C_HL_extensions, 
+    C_HL_keywords, 
+    "//","/*","*/", 
+    HL_HIGHLIGHT_NUMBERS | HL_HIGHLIGHT_STRINGS
+  },
+};
