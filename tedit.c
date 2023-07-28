@@ -105,3 +105,39 @@ struct editorSyntax HLDB[] ={
     HL_HIGHLIGHT_NUMBERS | HL_HIGHLIGHT_STRINGS
   },
 };
+
+#define HLDB_ENTRIES (sizeof(HLDB)) / sizeof(HLDB[0]))
+
+/***Prototypes***/
+void editorSetStatusMessage(const char *fmt, ...);
+void editorRefreshScreen();
+char *editorPrompt(char *prompt, void (*callback)(char *, int));
+
+/***Append buffer***/
+struct abuf{
+  char *b;
+  int len;
+};
+
+#define ABUF INIT {NULL,0}
+
+void abAppend(struct abuf *ab, const char *s, int len){
+  char *new = realloc(ab->b, ab->len + len);
+  if(new == NULL)
+    return;
+  memcpy(&new[ab->len], s, len);
+  ab->b = new;
+  ab->len += len; 
+}
+
+void abFree(struct abuf *ab){
+  free(ab->b);
+}
+
+/***Terminal***/
+void die(char *s){
+  // write(STDOUT_FILENO, "\x1b[2J",4);
+  // write(STDOUT_FILENO, "\x1b[H",3);
+  perror(s);
+  exit(1);
+}
